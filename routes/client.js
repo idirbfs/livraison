@@ -1,39 +1,83 @@
 const express = require("express");
-const router = express.Router();
 const bcrypt = require("bcryptjs");
-
 const Client = require("../models/Client");
+const {
+  validateEmail,
+  validateNom,
+  validatePassword,
+  validateTel,
+} = require("../helper/validator");
 
+const { isClient, isAdmin, isExpert } = require("../middlewear/auth");
+
+const router = express.Router();
+
+//GET: /api/client/ :@PRIVATE:(client)
+router.get("/", isClient, async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      res.status(400).json({ errors: { msg: "Authorization dennied" } });
+    }
+
+    let client = Client.findById(req.session.userId);
+
+    if (!client) {
+      res.send("izan");
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+//POST:api/client/login:@PUBLIC
 router.post("/login", async (req, res) => {
   const { email, motDePasse } = req.body;
-  // TODO : input validation {email, motDePasse}
-  // TODO : check credentials
+
   try {
+    //inputs validations
+    let errors = [...validateEmail(email), ...validatePassword(motDePasse)];
+    if (errors.length != 0) {
+      return res.status(400).json({ errors });
+    }
+
     let client = await Client.findOne({ email });
     if (!client) {
       return res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
     }
+
     const isMatch = await bcrypt.compare(motDePasse, client.motDePasse);
     if (!isMatch) {
       return res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
     }
 
-    // TODO : create token
-    // TODO : login success
+    req.session.userId = client.id;
 
-    res.send("login success!!!");
+    res.send("login success!!! : \n" + client);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("server error");
   }
 });
 
+//POST:api/client/register:@PUBLIC
 router.post("/register", async (req, res) => {
   console.log(req.body);
   const { nom, prenom, email, motDePasse, tel } = req.body;
-  //todo : check input
-  //todo : check the none existence of (email) in db
+
   try {
+    const errors = [
+      ...validateNom(nom),
+      ...validateNom(prenom),
+      ...validateEmail(email),
+      ...validatePassword(motDePasse),
+      ...validateTel(tel),
+    ];
+
+    if (errors.length != 0) {
+      return res.status(400).json({ errors });
+    }
+
     let client = await Client.findOne({ email });
 
     if (client) {
@@ -49,6 +93,12 @@ router.post("/register", async (req, res) => {
     console.error(err.message);
     res.status(500).send("Server error");
   }
+});
+
+//POST:api/client/logout:@PRIVATE(client)
+router.post("/logout", (req, res) => {
+  req.session.destroy();
+  res.send("logout success");
 });
 
 module.exports = router;

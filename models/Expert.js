@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ClientSchema = new mongoose.Schema({
+const ExpertSchema = new mongoose.Schema({
   nom: {
     type: String,
     required: true,
@@ -24,4 +24,4 @@ const ClientSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("client", ClientSchema);
+module.exports = mongoose.model("expert", ExpertSchema);

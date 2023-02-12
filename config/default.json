@@ -1,4 +1,4 @@
 {
   "mongoURI": "mongodb+srv://idirbfs:idiridiridir@cluster.pgqr6ez.mongodb.net/?retryWrites=true&w=majority",
-  "jwtSecret": "secret"
+  "sessionSecret": "somesecretmessage"
 }
