@@ -3,7 +3,19 @@ const bcrypt = require("bcryptjs");
 const { validateEmail, validatePassword } = require("../helper/validator");
 const router = express.Router();
 const Admin = require("../models/Admin");
+const { isAdmin } = require("../middlewear/auth");
 
+//GET:api/admin
+router.get("/", isAdmin, async (req, res) => {
+  try {
+    res.json(await Admin.findById(req.session.userId));
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+//POST:api/admin/login:@PUBLIC
 router.post("/login", async (req, res) => {
   const { email, motDePasse } = req.body;
   try {
@@ -27,7 +39,8 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/logout", (req, res) => {
+//POST:api/admin/logout:@PRIVATE(admin)
+router.post("/logout", isAdmin, (req, res) => {
   req.session.destroy();
   res.send("logout success");
 });

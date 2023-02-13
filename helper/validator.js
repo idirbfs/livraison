@@ -1,4 +1,4 @@
-const nameRegex = /^[A-ZÀ-ÖØ-Þ][a-zà-öø-ÿ]+([-'\s][A-ZÀ-ÖØ-Þ][a-zà-öø-ÿ]+)*$/;
+const nameRegex = /^[\p{L} .'-]+$/u;
 const telRegex = /^\d{10}$/;
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 

@@ -15,15 +15,7 @@ const router = express.Router();
 //GET: /api/client/ :@PRIVATE:(client)
 router.get("/", isClient, async (req, res) => {
   try {
-    if (!req.session.userId) {
-      res.status(400).json({ errors: { msg: "Authorization dennied" } });
-    }
-
-    let client = Client.findById(req.session.userId);
-
-    if (!client) {
-      res.send("izan");
-    }
+    res.json(await Client.findById(req.session.userId));
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -96,7 +88,7 @@ router.post("/register", async (req, res) => {
 });
 
 //POST:api/client/logout:@PRIVATE(client)
-router.post("/logout", (req, res) => {
+router.post("/logout", isClient, (req, res) => {
   req.session.destroy();
   res.send("logout success");
 });
