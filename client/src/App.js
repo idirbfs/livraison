@@ -1,8 +1,18 @@
+import { BrowserRouter, Route } from "react-router-dom";
 import "./App.css";
-import Compo from "./Compo";
+
+import Login from "./components/client/Login";
+import Home from "./components/Home";
 
 function App() {
-  return <Compo date="22/06/08" />;
+  return (
+    <BrowserRouter>
+      <div className="App">
+        <Route exact path="/" component={Home} />
+        <Route path="/login" component={Login} />
+      </div>
+    </BrowserRouter>
+  );
 }
 
 export default App;
