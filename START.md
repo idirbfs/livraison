@@ -1,4 +1,4 @@
-to lunch the developpement server you need to:
+to lunch the developpement server you need to:\n
 1- clone the repository
 2- make sure that you've installed NodeJS in your computer
 3- run "npm i" in the root folder to install the dependencies
